@@ -1,6 +1,6 @@
 import QuestionModel from '../models/questions';
+import AnswerModel from '../models/answers'
 import dayjs from 'dayjs';
-
 import { v4 as uuidv4 } from 'uuid';
 
 class QuestionsController {
@@ -17,11 +17,12 @@ class QuestionsController {
     try {
       const { id } = req.params;
 
-      const foundQuestion = QuestionModel.findOne({ questionId: id });
+      const foundQuestion = await QuestionModel.findOne({ questionId: id });
+
       if (!foundQuestion) {
         return res
-            .status(400)
-            .json({ error: 'question does not exist please check id' });
+          .status(400)
+          .json({ error: 'question does not exist please check id' });
       }
       return res.json({ question: foundQuestion });
     } catch (error) {
@@ -37,9 +38,9 @@ class QuestionsController {
         questionId: uuidv4(),
         title,
         description,
-        createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A')
+        createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A'),
       };
-      QuestionModel.create(createdQuestion);
+      await QuestionModel.create(createdQuestion);
 
       return res.status(201).json({
         question: createdQuestion,
@@ -50,95 +51,97 @@ class QuestionsController {
     }
   }
 
+  static async updateAQuestion(req, res) {
+    try {
+      const { id } = req.params;
+      const { title, description } = req.body;
+
+      await QuestionModel.findOneAndUpdate(
+        { questionId: id },
+        {
+          title,
+          description,
+          updatedAt: dayjs().format('YYYY-MM-DD h:mm:ss A'),
+        }
+      );
+
+      const updatedQuestion = await QuestionModel.findOne({ questionId: id });
+
+      return res
+        .status(201)
+        .json({ updatedQuestion, message: 'updated the question' });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  static async deleteAQuestion(req, res) {
+    try {
+      const { id } = req.params;
+
+      const Deletedquestion = await QuestionModel.findOne({ questionId: id });
+      if (!Deletedquestion) {
+        return res.status(400).json({
+          message: `The question does not exist`,
+        });
+      }
+      await Deletedquestion.deleteOne();
+      return res.status(204);
+    } catch (error) {
+      console.log(message.error);
+    }
+  }
 
 
-  //
-  //   static async upDated(req, res) {
-  //     try {
-  //       const { id } = req.params;
-  //
-  //       const { title, description } = req.body;
-  //
-  //       const updatedQuestion = Question.findOneAndUpdate((Question) => Question.id === id);
-  //
-  //       if (!updatedQuestion) {
-  //         return res.status(400).json({ error: 'question does not exist ' });
-  //       }
-  //
-  //       if (title) updatedQuestion.title = title;
-  //
-  //       if (description) updatedQuestion.description = description;
-  //
-  //       return res
-  //         .status(201)
-  //         .json({ updatedQuestion, message: 'updated the question' });
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-  //
-  //   static deleteQuestion(req, res) {
-  //     try {
-  //       const { id } = req.params;
-  //
-  //       const deletedQuestion = questions.findIndex(
-  //         (question) => question.id === id
-  //       );
-  //       if (!deletedQuestion) {
-  //         return res.status(400).json({ message: 'Question not found' });
-  //       }
-  //       questions.splice(deletedQuestion, 1);
-  //       return res.status(204).json({ message: 'question deleted ' });
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-  //   //post an answer
-  //
-  //   static createAnAnswer(req, res) {
-  //     try {
-  //       const { qnsId } = req.params;
-  //       const { answer } = req.body;
-  //
-  //       const foundQuestion = questions.find((question) => question.id === qnsId);
-  //       if (!foundQuestion) {
-  //         return res
-  //           .status(400)
-  //           .json({ error: 'question does not exist please check id' });
-  //       }
-  //
-  //       const createAnAnswer = {
-  //         id: uuidv4(),
-  //         questionId: qnsId,
-  //         answer: answer,
-  //       };
-  //       answers.push(createAnAnswer);
-  //
-  //       return res.status(201).json({
-  //         answer: createAnAnswer,
-  //         message: 'Answer has been created',
-  //       });
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-  //
-  //   static getAnAnswer(req, res) {
-  //     try {
-  //       const { id } = req.params;
-  //
-  //       const foundAnswer = answers.filter((answer) => answer.questionId === id);
-  //
-  //       if (foundAnswer.length === 0) {
-  //         return res
-  //           .status(400)
-  //           .json({ message: 'Answer to this question does not exist' });
-  //       }
-  //       return res.status(200).json(foundAnswer);
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-  // }
-}
+
+    //post an answer
+
+    static async createAnAnswer(req, res) {
+      try {
+        const { qnsId } = req.params;
+        const { answer } = req.body;
+
+        const foundQuestion = QuestionModel.findOne({questionId: qnsId});
+        if (!foundQuestion) {
+          return res
+            .status(400)
+            .json({ error: 'question does not exist please check id' });
+        }
+
+        const createAnAnswer = {
+          id: uuidv4(),
+          questionId: qnsId,
+          answer,
+        };
+
+        await AnswerModel.create(createAnAnswer)
+
+        return res.status(201).json({
+          answer: createAnAnswer,
+          message: 'Answer has been created',
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    static  async getAllAnswers(req, res) {
+      try {
+          const { qnsId } = req.params;
+
+        const foundAnswer = await AnswerModel.find({questionId: qnsId});
+
+        if (foundAnswer.length === 0) {
+          return res
+            .status(400)
+            .json({ message: 'Answer to this question does not exist' });
+        }
+        return res.status(200).json(foundAnswer);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  }
+
+
 export default QuestionsController;
