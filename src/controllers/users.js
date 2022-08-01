@@ -1,7 +1,7 @@
 import { users } from '../db/db';
 
 class UsersController {
-  static getAllUserss(req, res) {
+  static getAllUsers(req, res) {
     try {
       return res.status(200).json(answers);
     } catch (error) {

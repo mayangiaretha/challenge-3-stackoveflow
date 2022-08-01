@@ -1,12 +1,29 @@
-import QuestionsModel from '../models/questions';
+import QuestionModel from '../models/questions';
+import dayjs from 'dayjs';
 
 import { v4 as uuidv4 } from 'uuid';
 
 class QuestionsController {
   static async getAllQuestions(req, res) {
     try {
-      const allQuestions = await Question.find();
+      const allQuestions = await QuestionModel.find();
       return res.status(200).json(allQuestions);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  static async getAQuestion(req, res) {
+    try {
+      const { id } = req.params;
+
+      const foundQuestion = QuestionModel.findOne({ questionId: id });
+      if (!foundQuestion) {
+        return res
+            .status(400)
+            .json({ error: 'question does not exist please check id' });
+      }
+      return res.json({ question: foundQuestion });
     } catch (error) {
       console.log(error.message);
     }
@@ -17,11 +34,12 @@ class QuestionsController {
       const { title, description } = req.body;
 
       const createdQuestion = {
-        id: uuidv4(),
+        questionId: uuidv4(),
         title,
         description,
+        createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A')
       };
-      Question.create(createdQuestion);
+      QuestionModel.create(createdQuestion);
 
       return res.status(201).json({
         question: createdQuestion,
@@ -32,21 +50,7 @@ class QuestionsController {
     }
   }
 
-  static async getAQuestion(req, res) {
-    try {
-      const { id } = req.params;
 
-      const foundQuestion = Question.findById((Question) => Question.id === id);
-      if (!foundQuestion) {
-        return res
-          .status(400)
-          .json({ error: 'question does not exist please check id' });
-      }
-      return res.json({ question: foundQuestion });
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
   //
   //   static async upDated(req, res) {

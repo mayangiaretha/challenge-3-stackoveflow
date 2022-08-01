@@ -14,7 +14,8 @@ router.post(
       description: Joi.string().required().min(10).max(3000),
     }),
   }),
-  QuestionsController.createAQuestion);
+  QuestionsController.createAQuestion
+);
 
 router.get('/:id', QuestionsController.getAQuestion);
 
