@@ -20,8 +20,8 @@ class QuestionsController {
       const foundQuestion = QuestionModel.findOne({ questionId: id });
       if (!foundQuestion) {
         return res
-            .status(400)
-            .json({ error: 'question does not exist please check id' });
+          .status(400)
+          .json({ error: 'question does not exist please check id' });
       }
       return res.json({ question: foundQuestion });
     } catch (error) {
@@ -37,7 +37,7 @@ class QuestionsController {
         questionId: uuidv4(),
         title,
         description,
-        createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A')
+        createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A'),
       };
       QuestionModel.create(createdQuestion);
 
@@ -50,32 +50,31 @@ class QuestionsController {
     }
   }
 
+  static async updateAQuestion(req, res) {
+    try {
+      const { id } = req.params;
 
+      const { title, description } = req.body;
 
-  //
-  //   static async upDated(req, res) {
-  //     try {
-  //       const { id } = req.params;
-  //
-  //       const { title, description } = req.body;
-  //
-  //       const updatedQuestion = Question.findOneAndUpdate((Question) => Question.id === id);
-  //
-  //       if (!updatedQuestion) {
-  //         return res.status(400).json({ error: 'question does not exist ' });
-  //       }
-  //
-  //       if (title) updatedQuestion.title = title;
-  //
-  //       if (description) updatedQuestion.description = description;
-  //
-  //       return res
-  //         .status(201)
-  //         .json({ updatedQuestion, message: 'updated the question' });
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
+      const updatedQuestion = Question.findOneAndUpdate(
+        (Question) => Question.id === id
+      );
+
+      if (!updatedQuestion) {
+        return res.status(400).json({ error: 'question does not exist ' });
+      }
+
+      if (title) updatedQuestion.title = title;
+
+      if (description) updatedQuestion.description = description;
+
+      return res
+        .status(201)
+        .json({ updatedQuestion, message: 'updated the question' });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   //
   //   static deleteQuestion(req, res) {
   //     try {
