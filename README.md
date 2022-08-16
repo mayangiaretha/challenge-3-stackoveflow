@@ -9,18 +9,19 @@ in the command line
 
 In the project directory, you can run:
 
-### Install all dependencies
+### Setup
 
-run:`npm install `
-run: npm run dev
+- run:`npm install`
+- create a config folder with a `dev.env` and `test.env`. set the up as per `.env.example`
+- run: `npm run dev` to run the app
 
-Runs the app
 Open [http://localhost:8000](http://localhost:8000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
+### Testing 
+- run `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the [chai Assertion Libray] for more information on chai.
