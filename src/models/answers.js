@@ -1,15 +1,19 @@
 import mongoose from 'mongoose';
 
-const questionSchema = new mongoose.Schema({
+const AnswerSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
   questionId: {
     type: String,
     required: true,
   },
-  title: {
+  user_id: {
     type: String,
-    required: true,
+    required: false,
   },
-  description: {
+  answer: {
     type: String,
     required: true,
   },
@@ -21,11 +25,7 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  user_id: {
-    type: String,
-    required: false,
-  },
 });
 
-let QuestionModel = mongoose.model('Question', questionSchema);
-export default QuestionModel;
+let AnswerModel = mongoose.model('Answer', AnswerSchema);
+export default AnswerModel;
