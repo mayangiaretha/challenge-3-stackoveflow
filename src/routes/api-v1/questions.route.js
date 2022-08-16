@@ -46,10 +46,11 @@ router.post(
       answer: Joi.string().min(10).required(),
     }),
   }),
+  verifyToken,
   QuestionsController.createAnAnswer
 );
 
 // // Getting a specific answer
- router.get('/:qnsId/answers/', QuestionsController.getAllAnswers);
+router.get('/:qnsId/answers/', QuestionsController.getAllAnswers);
 
 export default router;

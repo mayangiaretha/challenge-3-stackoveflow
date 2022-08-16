@@ -9,8 +9,8 @@ router.post(
 
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      firstName: Joi.string().min(5).max(15).required(),
-      lastName: Joi.string().min(5).max(15).required(),
+      firstName: Joi.string().min(2).max(15).required(),
+      lastName: Joi.string().min(2).max(15).required(),
       email: Joi.string().required().email(),
       password: Joi.string().min(6).max(20).required(),
     }),

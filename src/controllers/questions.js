@@ -1,5 +1,5 @@
 import QuestionModel from '../models/questions';
-import AnswerModel from '../models/answers'
+import AnswerModel from '../models/answers';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -79,69 +79,66 @@ class QuestionsController {
     try {
       const { id } = req.params;
 
-      const Deletedquestion = await QuestionModel.findOne({ questionId: id });
-      if (!Deletedquestion) {
+      const deletedQuestion = await QuestionModel.findOne({ questionId: id });
+      if (!deletedQuestion) {
         return res.status(400).json({
           message: `The question does not exist`,
         });
       }
-      await Deletedquestion.deleteOne();
+      await deletedQuestion.deleteOne();
       return res.status(204);
     } catch (error) {
       console.log(message.error);
     }
   }
 
+  //post an answer
 
+  static async createAnAnswer(req, res) {
+    try {
+      const { qnsId } = req.params;
+      const { answer } = req.body;
 
-    //post an answer
-
-    static async createAnAnswer(req, res) {
-      try {
-        const { qnsId } = req.params;
-        const { answer } = req.body;
-
-        const foundQuestion = QuestionModel.findOne({questionId: qnsId});
-        if (!foundQuestion) {
-          return res
-            .status(400)
-            .json({ error: 'question does not exist please check id' });
-        }
-
-        const createAnAnswer = {
-          id: uuidv4(),
-          questionId: qnsId,
-          answer,
-        };
-
-        await AnswerModel.create(createAnAnswer)
-
-        return res.status(201).json({
-          answer: createAnAnswer,
-          message: 'Answer has been created',
-        });
-      } catch (error) {
-        console.log(error.message);
+      const foundQuestion = QuestionModel.findOne({ questionId: qnsId });
+      if (!foundQuestion) {
+        return res
+          .status(400)
+          .json({ error: 'question does not exist please check id' });
       }
-    }
 
-    static  async getAllAnswers(req, res) {
-      try {
-          const { qnsId } = req.params;
+      const createAnAnswer = {
+        id: uuidv4(),
+        questionId: qnsId,
+        answer,
+      };
 
-        const foundAnswer = await AnswerModel.find({questionId: qnsId});
+      await AnswerModel.create(createAnAnswer);
 
-        if (foundAnswer.length === 0) {
-          return res
-            .status(400)
-            .json({ message: 'Answer to this question does not exist' });
-        }
-        return res.status(200).json(foundAnswer);
-      } catch (error) {
-        console.log(error.message);
-      }
+      return res.status(201).json({
+        answer: createAnAnswer,
+        message: 'Answer has been created',
+      });
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
+  static async getAllAnswers(req, res) {
+    try {
+      const { qnsId } = req.params;
+
+      const foundAnswer = await AnswerModel.find({ questionId: qnsId });
+
+      if (foundAnswer.length === 0) {
+        return res
+          .status(400)
+          .json({ message: 'Answer to this question does not exist' });
+      }
+      return res.status(200).json(foundAnswer);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+}
 
 export default QuestionsController;

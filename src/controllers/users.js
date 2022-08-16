@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 class UsersController {
   static async registerAUser(req, res) {
     try {
-      const { firstName, lastName, email, password, createdAt } = req.body;
+      const { firstName, lastName, email, password } = req.body;
 
       const oldUser = await usersModel.findOne({ email });
       if (oldUser) {
@@ -20,18 +20,21 @@ class UsersController {
         userId: uuidv4(),
         firstName,
         lastName,
-        email: email.toLowerCase(),
+        email: email,
         password: encryptedPassword,
         createdAt: dayjs().format('YYYY-MM-DD h:mm:ss A'),
       });
 
-      await usersModel.create(newUser);
+      const createdUser = await usersModel.create(newUser);
+
+      const { userId, createdAt } = createdUser;
       return res.status(201).json({
-        userID: uuidv4(),
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
+        userID: userId,
+        firstName,
+        lastName,
+        email,
         password: '******',
+        createdAt,
       });
     } catch (error) {
       console.log(error);
@@ -49,7 +52,7 @@ class UsersController {
         return res.status(400).json({ message: 'Invalid Password' });
 
       const token = jwt.sign({ Id: uuidv4(), email }, process.env.TOKEN_KEY);
-      return res.status(200).json({ token });
+      return res.header('auth-token', token).json({ token });
     } catch (e) {
       console.log(e.message);
     }
