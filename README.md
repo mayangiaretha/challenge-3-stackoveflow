@@ -4,7 +4,7 @@ This is a stack overflow-api clone
 
 ## Quick set up
 
-To clone this repository,type git clone https://github.com/mayangiaretha/stackoverflow-backend.git
+To clone this repository,type git clone https://github.com/mayangiaretha/challenge-3-stackoveflow.git
 in the command line
 
 In the project directory, you can run:
